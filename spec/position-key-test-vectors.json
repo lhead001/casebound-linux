@@ -1,0 +1,196 @@
+{
+  "description" : "Book key test vectors for Casebound position sync (format 1). The key is fileName.precomposedStringWithCanonicalMapping.lowercased() + \"|\" + String(fileSizeBytes): the file name only (with extension, no folders), Unicode NFC first, then Swift's String.lowercased(), then a pipe and the size in bytes as a base-10 integer. expectedKey values were produced by Swift on macOS and are the reference. The *Scalars fields spell every non-ASCII scalar as \\u{hex} so NFC and NFD names can be told apart.",
+  "dotnetNote" : "The Windows app should compute Normalize(NormalizationForm.FormC) then ToLowerInvariant() and compare against expectedKey. Vectors marked dotnetMayDiffer are the known risks: .NET invariant lowercasing is one-to-one per UTF-16 unit (simple case mapping), while Swift's lowercased() applies full Unicode mappings, so U+0130 (I with dot) becomes two scalars in Swift. Newer scripts such as Georgian Mtavruli depend on each side's Unicode case tables. A mismatch only means that one book's position won't sync between Windows and Apple devices; nothing else breaks.",
+  "generatedBy" : "Swift Version 27.0 (Build 26A428)",
+  "vectors" : [
+    {
+      "dotnetMayDiffer" : false,
+      "expectedKey" : "jack carr - only the dead.m4b|445899998",
+      "expectedKeyScalars" : "jack carr - only the dead.m4b|445899998",
+      "fileName" : "Jack Carr - Only the Dead.m4b",
+      "fileNameScalars" : "Jack Carr - Only the Dead.m4b",
+      "note" : "Real fixture: matches the key CHEWBACCA (Windows) already wrote for this book.",
+      "size" : 445899998
+    },
+    {
+      "dotnetMayDiffer" : false,
+      "expectedKey" : "cry havoc.m4b|676144782",
+      "expectedKeyScalars" : "cry havoc.m4b|676144782",
+      "fileName" : "Cry Havoc.m4b",
+      "fileNameScalars" : "Cry Havoc.m4b",
+      "note" : "Real fixture from the shared Audiobooks folder.",
+      "size" : 676144782
+    },
+    {
+      "dotnetMayDiffer" : false,
+      "expectedKey" : "book (unabridged) [2024].m4b|123456789",
+      "expectedKeyScalars" : "book (unabridged) [2024].m4b|123456789",
+      "fileName" : "Book (Unabridged) [2024].M4B",
+      "fileNameScalars" : "Book (Unabridged) [2024].M4B",
+      "note" : "Extension is part of the key and is lowercased too.",
+      "size" : 123456789
+    },
+    {
+      "dotnetMayDiffer" : false,
+      "expectedKey" : "café society.m4b|1000",
+      "expectedKeyScalars" : "caf\\u{E9} society.m4b|1000",
+      "fileName" : "Café Society.m4b",
+      "fileNameScalars" : "Caf\\u{E9} Society.m4b",
+      "note" : "NFC: e-acute as one scalar U+00E9.",
+      "size" : 1000
+    },
+    {
+      "dotnetMayDiffer" : false,
+      "expectedKey" : "café society.m4b|1000",
+      "expectedKeyScalars" : "caf\\u{E9} society.m4b|1000",
+      "fileName" : "Café Society.m4b",
+      "fileNameScalars" : "Cafe\\u{301} Society.m4b",
+      "note" : "NFD: e + U+0301. Must produce the SAME key as the NFC vector above (normalize to NFC before lowercasing).",
+      "size" : 1000
+    },
+    {
+      "dotnetMayDiffer" : false,
+      "expectedKey" : "crème brûlée.m4b|2000",
+      "expectedKeyScalars" : "cr\\u{E8}me br\\u{FB}l\\u{E9}e.m4b|2000",
+      "fileName" : "Crème Brûlée.m4b",
+      "fileNameScalars" : "Cre\\u{300}me Bru\\u{302}le\\u{301}e.m4b",
+      "note" : "NFD with three combining marks; composes to U+00E8, U+00FB, U+00E9.",
+      "size" : 2000
+    },
+    {
+      "dotnetMayDiffer" : false,
+      "expectedKey" : "한국어.m4b|3000",
+      "expectedKeyScalars" : "\\u{D55C}\\u{AD6D}\\u{C5B4}.m4b|3000",
+      "fileName" : "한국어.m4b",
+      "fileNameScalars" : "\\u{1112}\\u{1161}\\u{11AB}\\u{1100}\\u{116E}\\u{11A8}\\u{110B}\\u{1165}.m4b",
+      "note" : "Hangul as conjoining jamo (NFD); NFC composes it to 3 syllables.",
+      "size" : 3000
+    },
+    {
+      "dotnetMayDiffer" : false,
+      "expectedKey" : "ångström.m4b|4000",
+      "expectedKeyScalars" : "\\u{E5}ngstr\\u{F6}m.m4b|4000",
+      "fileName" : "Ångström.m4b",
+      "fileNameScalars" : "\\u{212B}ngstr\\u{F6}m.m4b",
+      "note" : "U+212B ANGSTROM SIGN: NFC maps it to U+00C5 before lowercasing, giving U+00E5.",
+      "size" : 4000
+    },
+    {
+      "dotnetMayDiffer" : false,
+      "expectedKey" : "kelvin.m4b|4001",
+      "expectedKeyScalars" : "kelvin.m4b|4001",
+      "fileName" : "Kelvin.m4b",
+      "fileNameScalars" : "\\u{212A}elvin.m4b",
+      "note" : "U+212A KELVIN SIGN: NFC maps it to ASCII K, then k.",
+      "size" : 4001
+    },
+    {
+      "dotnetMayDiffer" : true,
+      "expectedKey" : "i̇stanbul hatırası.m4b|5000",
+      "expectedKeyScalars" : "i\\u{307}stanbul hat\\u{131}ras\\u{131}.m4b|5000",
+      "fileName" : "İstanbul Hatırası.m4b",
+      "fileNameScalars" : "\\u{130}stanbul Hat\\u{131}ras\\u{131}.m4b",
+      "note" : "U+0130 capital I with dot above. Swift lowercased() uses the FULL Unicode mapping and yields TWO scalars: i + U+0307. .NET ToLowerInvariant() uses simple one-to-one mapping and yields either U+0069 or leaves U+0130 unchanged depending on runtime/ICU mode, so the key will likely differ. Dotless i (U+0131) is already lowercase in both.",
+      "size" : 5000
+    },
+    {
+      "dotnetMayDiffer" : false,
+      "expectedKey" : "istanbul.m4b|5001",
+      "expectedKeyScalars" : "istanbul.m4b|5001",
+      "fileName" : "ISTANBUL.m4b",
+      "fileNameScalars" : "ISTANBUL.m4b",
+      "note" : "ASCII I lowercases to ASCII i in both (neither side is Turkish-culture aware).",
+      "size" : 5001
+    },
+    {
+      "dotnetMayDiffer" : false,
+      "expectedKey" : "straße.m4b|6000",
+      "expectedKeyScalars" : "stra\\u{DF}e.m4b|6000",
+      "fileName" : "Straße.m4b",
+      "fileNameScalars" : "Stra\\u{DF}e.m4b",
+      "note" : "U+00DF sharp s is already lowercase; unchanged in both. (Uppercasing would differ, lowercasing does not.)",
+      "size" : 6000
+    },
+    {
+      "dotnetMayDiffer" : false,
+      "expectedKey" : "große strasse.m4b|6001",
+      "expectedKeyScalars" : "gro\\u{DF}e strasse.m4b|6001",
+      "fileName" : "GROẞE STRASSE.m4b",
+      "fileNameScalars" : "GRO\\u{1E9E}E STRASSE.m4b",
+      "note" : "U+1E9E capital sharp s lowercases to U+00DF in both (simple mapping exists).",
+      "size" : 6001
+    },
+    {
+      "dotnetMayDiffer" : false,
+      "expectedKey" : "🎧 audiobook 🇺🇸.m4b|7000",
+      "expectedKeyScalars" : "\\u{1F3A7} audiobook \\u{1F1FA}\\u{1F1F8}.m4b|7000",
+      "fileName" : "🎧 Audiobook 🇺🇸.m4b",
+      "fileNameScalars" : "\\u{1F3A7} Audiobook \\u{1F1FA}\\u{1F1F8}.m4b",
+      "note" : "Emoji (astral plane, surrogate pairs in UTF-16) and a flag sequence pass through unchanged.",
+      "size" : 7000
+    },
+    {
+      "dotnetMayDiffer" : false,
+      "expectedKey" : "οδυσσειασ.m4b|8000",
+      "expectedKeyScalars" : "\\u{3BF}\\u{3B4}\\u{3C5}\\u{3C3}\\u{3C3}\\u{3B5}\\u{3B9}\\u{3B1}\\u{3C3}.m4b|8000",
+      "fileName" : "ΟΔΥΣΣΕΙΑΣ.m4b",
+      "fileNameScalars" : "\\u{39F}\\u{394}\\u{3A5}\\u{3A3}\\u{3A3}\\u{395}\\u{399}\\u{391}\\u{3A3}.m4b",
+      "note" : "Greek capitals ending in SIGMA. Swift lowercased() does NOT apply the word-final sigma rule: every U+03A3 becomes U+03C3, the same as .NET ToLowerInvariant. Context-sensitive lowercasers (Python str.lower, ICU full mapping, JavaScript) give a final U+03C2 instead, so do not use those.",
+      "size" : 8000
+    },
+    {
+      "dotnetMayDiffer" : false,
+      "expectedKey" : "ǆ digraph.m4b|9000",
+      "expectedKeyScalars" : "\\u{1C6} digraph.m4b|9000",
+      "fileName" : "Ǆ Digraph.m4b",
+      "fileNameScalars" : "\\u{1C4} Digraph.m4b",
+      "note" : "U+01C4 DZ-caron digraph lowercases to U+01C6.",
+      "size" : 9000
+    },
+    {
+      "dotnetMayDiffer" : false,
+      "expectedKey" : "ｆｕｌｌｗｉｄｔｈ.m4b|10000",
+      "expectedKeyScalars" : "\\u{FF46}\\u{FF55}\\u{FF4C}\\u{FF4C}\\u{FF57}\\u{FF49}\\u{FF44}\\u{FF54}\\u{FF48}.m4b|10000",
+      "fileName" : "ＦｕｌｌＷｉｄｔｈ.m4b",
+      "fileNameScalars" : "\\u{FF26}\\u{FF55}\\u{FF4C}\\u{FF4C}\\u{FF37}\\u{FF49}\\u{FF44}\\u{FF54}\\u{FF48}.m4b",
+      "note" : "Fullwidth Latin: U+FF26 and U+FF37 lowercase to U+FF46 and U+FF57. NFC does not fold width.",
+      "size" : 10000
+    },
+    {
+      "dotnetMayDiffer" : true,
+      "expectedKey" : "გეორგი.m4b|11000",
+      "expectedKeyScalars" : "\\u{10D2}\\u{10D4}\\u{10DD}\\u{10E0}\\u{10D2}\\u{10D8}.m4b|11000",
+      "fileName" : "ᲒᲔᲝᲠᲒᲘ.m4b",
+      "fileNameScalars" : "\\u{1C92}\\u{1C94}\\u{1C9D}\\u{1CA0}\\u{1C92}\\u{1C98}.m4b",
+      "note" : "Georgian Mtavruli capitals (Unicode 11, 2018). Needs Unicode 11+ case data on both sides; an older .NET/Windows Unicode table leaves them unchanged.",
+      "size" : 11000
+    },
+    {
+      "dotnetMayDiffer" : false,
+      "expectedKey" : "empty.m4b|0",
+      "expectedKeyScalars" : "empty.m4b|0",
+      "fileName" : "Empty.m4b",
+      "fileNameScalars" : "Empty.m4b",
+      "note" : "Zero-byte size still appends |0.",
+      "size" : 0
+    },
+    {
+      "dotnetMayDiffer" : false,
+      "expectedKey" : "huge book.m4b|5000000000",
+      "expectedKeyScalars" : "huge book.m4b|5000000000",
+      "fileName" : "Huge Book.m4b",
+      "fileNameScalars" : "Huge Book.m4b",
+      "note" : "Size above 2^32: must be a 64-bit integer on Windows (long, not int).",
+      "size" : 5000000000
+    },
+    {
+      "dotnetMayDiffer" : false,
+      "expectedKey" : "name with  double  spaces & symbols #1 (part 2).m4b|12000",
+      "expectedKeyScalars" : "name with  double  spaces & symbols #1 (part 2).m4b|12000",
+      "fileName" : "Name With  Double  Spaces & Symbols #1 (Part 2).m4b",
+      "fileNameScalars" : "Name With  Double  Spaces & Symbols #1 (Part 2).m4b",
+      "note" : "Spaces and punctuation are kept as-is; only case changes.",
+      "size" : 12000
+    }
+  ]
+}

@@ -1,0 +1,98 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             x:Class="Casebound.Views.ConvertView" DragDrop.AllowDrop="True">
+  <Grid ColumnDefinitions="*,320" RowDefinitions="Auto,*,Auto" Margin="24,16,24,20">
+    <Grid Grid.ColumnSpan="2" ColumnDefinitions="Auto,*" Margin="0,0,0,12">
+      <TextBlock Text="Convert" Classes="title"/>
+      <StackPanel Grid.Column="1" Orientation="Horizontal" HorizontalAlignment="Right" Spacing="6">
+        <Button Content="Add files…" Click="AddFiles_Click" IsEnabled="{Binding Model.IsIdle}"/>
+        <Button Content="Add folder…" Click="AddFolder_Click" IsEnabled="{Binding Model.IsIdle}"/>
+        <Button Content="Name chapters…" Click="NameChapters_Click" IsEnabled="{Binding Model.CanConvert}"/>
+        <Button Content="Sort by name" Click="Sort_Click" IsEnabled="{Binding Model.CanConvert}"/>
+        <Button Content="Clear" Click="Clear_Click" IsEnabled="{Binding Model.CanConvert}"/>
+      </StackPanel>
+    </Grid>
+
+    <!-- Parts -->
+    <Border Grid.Row="1" Classes="card" Margin="0,0,20,0">
+      <Grid RowDefinitions="Auto,*">
+        <Grid ColumnDefinitions="40,*,Auto,80" Margin="12,8">
+          <TextBlock Text="#" Classes="caption"/>
+          <TextBlock Grid.Column="1" Text="Chapter title" Classes="caption"/>
+          <TextBlock Grid.Column="2" Text="{Binding Model.TotalText}" Classes="caption" Margin="0,0,12,0"/>
+          <TextBlock Grid.Column="3" Text="Length" Classes="caption" HorizontalAlignment="Right"/>
+        </Grid>
+        <ListBox x:Name="PartList" DragDrop.AllowDrop="True" Grid.Row="1" ItemsSource="{Binding Model.Parts}" Background="Transparent">
+          <ListBox.ItemTemplate>
+            <DataTemplate>
+              <Grid ColumnDefinitions="40,*,Auto,70">
+                <TextBlock Text="{Binding NumberText}" VerticalAlignment="Center" Opacity="0.6"/>
+                <StackPanel Grid.Column="1" Spacing="2">
+                  <TextBox Text="{Binding Title, Mode=TwoWay}"/>
+                  <TextBlock Text="{Binding FileName}" Classes="caption" TextTrimming="CharacterEllipsis"/>
+                </StackPanel>
+                <StackPanel Grid.Column="2" Orientation="Horizontal" Spacing="2" Margin="8,0" VerticalAlignment="Center">
+                  <Button Content="▲" Tag="{Binding}" Click="Up_Click" ToolTip.Tip="Move up" Padding="6,2"/>
+                  <Button Content="▼" Tag="{Binding}" Click="Down_Click" ToolTip.Tip="Move down" Padding="6,2"/>
+                  <Button Content="✕" Tag="{Binding}" Click="Remove_Click" ToolTip.Tip="Remove" Padding="6,2"/>
+                </StackPanel>
+                <TextBlock Grid.Column="3" Text="{Binding DurationText}" VerticalAlignment="Center" HorizontalAlignment="Right" Opacity="0.7"/>
+              </Grid>
+            </DataTemplate>
+          </ListBox.ItemTemplate>
+        </ListBox>
+        <StackPanel Grid.Row="1" IsVisible="{Binding Model.NoParts}" VerticalAlignment="Center" HorizontalAlignment="Center" Spacing="8" Margin="24">
+          <TextBlock Text="⇩" FontSize="40" HorizontalAlignment="Center" Opacity="0.4"/>
+          <TextBlock Text="Drop audio files or a folder here" Classes="subtitle" HorizontalAlignment="Center"/>
+          <TextBlock Text="MP3, M4A, WAV, FLAC, OGG, Opus… one file per chapter. They'll be joined into a single chaptered .m4b."
+                     TextWrapping="Wrap" TextAlignment="Center" MaxWidth="420" Opacity="0.7"/>
+        </StackPanel>
+      </Grid>
+    </Border>
+
+    <!-- Book + output -->
+    <ScrollViewer Grid.Row="1" Grid.Column="1">
+      <StackPanel Spacing="10">
+        <TextBlock Text="Book" Classes="section"/>
+        <StackPanel Orientation="Horizontal" Spacing="12">
+          <Border Width="110" Height="110" CornerRadius="6" ClipToBounds="True" Background="{DynamicResource SystemControlBackgroundBaseLowBrush}">
+            <Panel>
+              <TextBlock Text="No cover" HorizontalAlignment="Center" VerticalAlignment="Center" Opacity="0.5" IsVisible="{Binding Model.NoCover}"/>
+              <Image Source="{Binding Model.CoverImage}" Stretch="UniformToFill"/>
+            </Panel>
+          </Border>
+          <StackPanel Spacing="6" VerticalAlignment="Center">
+            <Button Content="Choose cover…" Click="ChooseCover_Click" IsEnabled="{Binding Model.IsIdle}"/>
+            <Button Content="Remove" Click="RemoveCover_Click" IsEnabled="{Binding Model.HasCover}"/>
+          </StackPanel>
+        </StackPanel>
+        <TextBlock Text="Title" Classes="caption"/>
+        <TextBox Text="{Binding Model.BookTitle, Mode=TwoWay}" IsEnabled="{Binding Model.IsIdle}"/>
+        <TextBlock Text="Author" Classes="caption"/>
+        <TextBox Text="{Binding Model.Author, Mode=TwoWay}" IsEnabled="{Binding Model.IsIdle}"/>
+        <TextBlock Text="Narrator" Classes="caption"/>
+        <TextBox Text="{Binding Model.Narrator, Mode=TwoWay}" IsEnabled="{Binding Model.IsIdle}"/>
+
+        <TextBlock Text="Output" Classes="section" Margin="0,8,0,0"/>
+        <TextBlock Text="Quality (AAC)" Classes="caption"/>
+        <ComboBox x:Name="BitrateBox" HorizontalAlignment="Stretch" SelectionChanged="Bitrate_SelectionChanged"/>
+        <CheckBox x:Name="SyncedBox" Content="Save to the synced library" Click="Synced_Click"/>
+        <TextBlock x:Name="SyncedHint" Classes="caption" TextWrapping="Wrap"/>
+        <Button x:Name="SyncedChoose" Content="Choose synced folder…" Click="ChooseSynced_Click"/>
+        <Button Content="Convert to .m4b" Classes="accent" HorizontalAlignment="Stretch" HorizontalContentAlignment="Center"
+                Click="Convert_Click" IsEnabled="{Binding Model.CanConvert}" Margin="0,8,0,0"/>
+        <Button Content="Cancel" HorizontalAlignment="Stretch" HorizontalContentAlignment="Center" Click="Cancel_Click" IsVisible="{Binding Model.IsConverting}"/>
+      </StackPanel>
+    </ScrollViewer>
+
+    <!-- Status -->
+    <StackPanel Grid.Row="2" Grid.ColumnSpan="2" Spacing="6" Margin="0,12,0,0">
+      <ProgressBar Value="{Binding Model.Progress}" Maximum="100" IsVisible="{Binding Model.IsConverting}"/>
+      <StackPanel Orientation="Horizontal" Spacing="12">
+        <TextBlock Text="{Binding Model.Status}" TextWrapping="Wrap" VerticalAlignment="Center"/>
+        <Button Content="Show in Files" Click="Reveal_Click" IsVisible="{Binding Model.HasLastOutput}"/>
+        <Button Content="Listen now" Click="ListenNow_Click" IsVisible="{Binding Model.HasLastOutput}"/>
+      </StackPanel>
+    </StackPanel>
+  </Grid>
+</UserControl>

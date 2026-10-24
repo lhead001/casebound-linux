@@ -1,0 +1,32 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             x:Class="Casebound.Views.HelpView">
+  <ScrollViewer>
+    <StackPanel MaxWidth="680" HorizontalAlignment="Left" Spacing="10" Margin="24,16,24,24">
+      <StackPanel.Styles>
+        <Style Selector="TextBlock"><Setter Property="TextWrapping" Value="Wrap"/></Style>
+        <Style Selector="TextBlock:not(.title):not(.section)"><Setter Property="LineHeight" Value="21"/></Style>
+      </StackPanel.Styles>
+      <TextBlock Text="Help" Classes="title"/>
+      <TextBlock Text="Chaptered, bound, and in sync." Opacity="0.7"/>
+
+      <TextBlock Text="Convert" Classes="section" Margin="0,12,0,0"/>
+      <TextBlock>Drop a folder of audio files onto the Convert screen, or click Add files… or Add folder…. Each file becomes one chapter, in natural order: track numbers when every file has a unique one, otherwise file names, so "Part 2" comes before "Part 10". Click ▲ and ▼ to reorder, and click a title to edit it.</TextBlock>
+      <TextBlock>Name chapters… builds titles from front matter (Opening Credits, Prologue), a numbered run (Chapter {n}, as digits or words), and back matter (Epilogue, End Credits). It can also take titles from the files' tags or their names.</TextBlock>
+      <TextBlock>Title, author, narrator and cover are guessed from the tags and can be changed. Convert encodes AAC with ffmpeg's built-in encoder and checks the finished file by reading its chapters back before calling it done. Casebound needs ffmpeg installed; the Flatpak includes it.</TextBlock>
+
+      <TextBlock Text="Listen" Classes="section" Margin="0,12,0,0"/>
+      <TextBlock>Click a book to play it. Continue Listening at the top shows the books you're partway through. Your place is saved as you go and restored next time. Speed keeps the narrator's pitch. The sleep timer can stop after a set time or at the end of the current chapter.</TextBlock>
+      <TextBlock>Right-click a book to show it in your file manager, mark it as not started, remove it from the list, or move it to the Trash. Remove from list only hides it; the file stays put. Hidden books are listed under "Removed from this list" at the bottom, where Show All brings them back.</TextBlock>
+      <TextBlock>Keys: Space plays and pauses, Ctrl+← and Ctrl+→ skip. Casebound shows up in your desktop's media controls (GNOME, KDE and others, through MPRIS), so keyboard media keys and headset buttons work too; there, Next and Previous move between chapters.</TextBlock>
+
+      <TextBlock Text="Syncing with your other devices" Classes="section" Margin="0,12,0,0"/>
+      <TextBlock>Casebound syncs through a folder you choose. Click ⋯ › Choose synced library folder… on the Listen screen, then pick a folder that a sync app keeps up to date on this computer, such as Nextcloud, Dropbox, Syncthing, ownCloud, or an rclone mount of another cloud drive. Pick the folder that holds the books themselves; Casebound uses it exactly as chosen and keeps its own small files in a hidden .casebound folder inside it.</TextBlock>
+      <TextBlock>Other Casebound apps that use the same folder share books and your place in each book. Open a book and it starts where you left off. If a newer position arrives while you're paused, Casebound jumps to it; if you're playing, or it would take you far back, it asks "Continue from…?" so you can choose.</TextBlock>
+      <TextBlock Opacity="0.75">How fast positions move between devices depends on your sync app. Syncthing and Nextcloud usually take seconds; an rclone mount may wait until its next sync.</TextBlock>
+
+      <TextBlock Text="Troubleshooting" Classes="section" Margin="0,12,0,0"/>
+      <TextBlock>Run "casebound --selftest" (or "abtool selftest") to check the encoder and the file writer. Casebound keeps its settings, positions and logs (sync.log, crash.log) in ~/.local/share/Casebound. If converting fails, check that "ffmpeg -version" works in a terminal.</TextBlock>
+    </StackPanel>
+  </ScrollViewer>
+</UserControl>

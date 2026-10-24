@@ -1,0 +1,22 @@
+<Application xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             x:Class="Casebound.App"
+             RequestedThemeVariant="Default">
+  <Application.Styles>
+    <FluentTheme />
+    <Style Selector="TextBlock.title"><Setter Property="FontSize" Value="26"/><Setter Property="FontWeight" Value="SemiBold"/></Style>
+    <Style Selector="TextBlock.section"><Setter Property="FontSize" Value="16"/><Setter Property="FontWeight" Value="SemiBold"/></Style>
+    <Style Selector="TextBlock.caption"><Setter Property="FontSize" Value="12"/><Setter Property="Opacity" Value="0.7"/></Style>
+    <Style Selector="TextBlock.subtitle"><Setter Property="FontSize" Value="19"/><Setter Property="FontWeight" Value="SemiBold"/></Style>
+    <Style Selector="Border.card">
+      <Setter Property="Background" Value="{DynamicResource SystemControlBackgroundChromeMediumLowBrush}"/>
+      <Setter Property="CornerRadius" Value="8"/>
+      <Setter Property="BorderBrush" Value="{DynamicResource SystemControlForegroundBaseLowBrush}"/>
+      <Setter Property="BorderThickness" Value="1"/>
+    </Style>
+    <Style Selector="Button.accent">
+      <Setter Property="Background" Value="{DynamicResource SystemAccentColor}"/>
+      <Setter Property="Foreground" Value="White"/>
+    </Style>
+  </Application.Styles>
+</Application>

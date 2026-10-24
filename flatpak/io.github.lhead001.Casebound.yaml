@@ -1,0 +1,199 @@
+app-id: io.github.lhead001.Casebound
+runtime: org.freedesktop.Platform
+runtime-version: '26.08'
+sdk: org.freedesktop.Sdk
+sdk-extensions:
+  - org.freedesktop.Sdk.Extension.dotnet10
+command: casebound
+finish-args:
+  # Avalonia 12 renders through X11 (XWayland on Wayland sessions); no native Wayland backend yet.
+  - --socket=x11
+  - --share=ipc
+  - --device=dri
+  - --socket=pulseaudio
+  # Desktop media controls / media keys (MPRIS).
+  - --own-name=org.mpris.MediaPlayer2.casebound
+  # The library is a folder the user picks that another app (Nextcloud, Dropbox, Syncthing...)
+  # keeps in sync. Casebound rescans it, writes positions into its hidden .casebound subfolder,
+  # and moves deleted books to the Trash, so it needs lasting read/write access to wherever that
+  # folder is; the document portal can't give persistent directory access for this use.
+  - --filesystem=home
+cleanup:
+  - /include
+  - /lib/pkgconfig
+  - /share/man
+  - /share/doc
+  - '*.la'
+  - '*.a'
+modules:
+  # ffmpeg CLI for decoding sources and encoding AAC. LGPL build: native codecs only, no external libs.
+  - name: ffmpeg
+    config-opts:
+      - --enable-shared
+      - --disable-static
+      - --disable-doc
+      - --disable-debug
+      - --disable-autodetect
+      - --disable-network
+      - --disable-avdevice
+      - --disable-postproc
+      - --disable-ffplay
+      - --enable-zlib
+    cleanup:
+      - /share/ffmpeg
+    sources:
+      - type: archive
+        url: https://ffmpeg.org/releases/ffmpeg-7.1.5.tar.xz
+        sha256: de668509caf9e35e3cd162473441fdb29538c6d96ed080292b3cf9e6fc5d558f
+        x-checker-data:
+          type: anitya
+          project-id: 5405
+          versions: {<: '8.0'}
+          url-template: https://ffmpeg.org/releases/ffmpeg-$version.tar.xz
+
+  # libVLC for playback (audio only), built minimal against the ffmpeg above.
+  - name: vlc
+    build-options:
+      env:
+        BUILDCC: gcc -std=gnu99
+    config-opts:
+      - --disable-vlc
+      - --disable-nls
+      - --disable-lua
+      - --disable-qt
+      - --disable-skins2
+      - --disable-xcb
+      - --disable-wayland
+      - --disable-xvideo
+      - --disable-glx
+      - --disable-gles2
+      - --disable-vdpau
+      - --disable-libva
+      - --disable-a52
+      - --disable-mad
+      - --disable-libgcrypt
+      - --disable-gnutls
+      - --disable-dbus
+      - --disable-chromecast
+      - --disable-sout
+      - --disable-vlm
+      - --disable-addonmanagermodules
+      - --disable-dvdread
+      - --disable-dvdnav
+      - --disable-bluray
+      - --disable-srt
+      - --disable-v4l2
+      - --disable-alsa
+      - --disable-jack
+      - --disable-sdl-image
+      - --disable-freetype
+      - --disable-fribidi
+      - --disable-fontconfig
+      - --disable-svg
+      - --disable-svgdec
+      - --disable-libxml2
+      - --disable-avahi
+      - --disable-udev
+      - --disable-mtp
+      - --disable-upnp
+      - --disable-microdns
+      - --disable-secret
+      - --disable-kwallet
+      - --disable-notify
+      - --disable-taglib
+      - --disable-libass
+      - --disable-swscale
+      - --disable-postproc
+      - --disable-png
+      - --disable-jpeg
+      - --disable-x264
+      - --disable-x26410b
+      - --disable-vpx
+      - --disable-dav1d
+      - --disable-aom
+      - --disable-schroedinger
+      - --disable-libmpeg2
+      - --disable-vorbis
+      - --disable-ogg
+      - --disable-opus
+      - --disable-flac
+      - --disable-speex
+      - --disable-mpg123
+      - --disable-caca
+      - --disable-goom
+      - --disable-projectm
+      - --disable-vsxu
+      - --disable-medialibrary
+      - --disable-archive
+      - --disable-live555
+      - --disable-dc1394
+      - --disable-dv1394
+      - --disable-linsys
+      - --disable-decklink
+      - --disable-gme
+      - --disable-sid
+      - --disable-mod
+      - --disable-mpc
+      - --disable-shout
+      - --disable-zvbi
+      - --disable-telx
+      - --disable-crystalhd
+      - --disable-mmal
+      - --disable-samplerate
+      - --disable-soxr
+      - --disable-lirc
+      - --disable-ncurses
+      - --disable-update-check
+      - --enable-avcodec
+      - --enable-avformat
+      - --enable-pulse
+    cleanup:
+      - /bin
+      - /share/applications
+      - /share/icons
+      - /share/vlc/lua
+      - /share/metainfo
+      - /share/kde4
+    post-install:
+      - /app/lib/vlc/vlc-cache-gen /app/lib/vlc/plugins
+    sources:
+      - type: archive
+        url: https://download.videolan.org/pub/videolan/vlc/3.0.24/vlc-3.0.24.tar.xz
+        sha256: e7cab503d1d7d5849b89d2cf0e1ee60d0ef6d012407791b644b9cfc0cc225fdf
+        x-checker-data:
+          type: anitya
+          project-id: 6504
+          versions: {<: '4.0'}
+          url-template: https://download.videolan.org/pub/videolan/vlc/$version/vlc-$version.tar.xz
+
+  - name: casebound
+    buildsystem: simple
+    build-options:
+      append-path: /usr/lib/sdk/dotnet10/bin
+      append-ld-library-path: /usr/lib/sdk/dotnet10/lib
+      env:
+        DOTNET_CLI_TELEMETRY_OPTOUT: 'true'
+        DOTNET_NOLOGO: 'true'
+        AVALONIA_TELEMETRY_OPTOUT: '1'
+        PKG_CONFIG_PATH: /app/lib/pkgconfig:/app/share/pkgconfig:/usr/lib/pkgconfig:/usr/share/pkgconfig:/usr/lib/sdk/dotnet10/lib/pkgconfig
+      arch:
+        x86_64:
+          env:
+            RUNTIME: linux-x64
+        aarch64:
+          env:
+            RUNTIME: linux-arm64
+    build-commands:
+      - dotnet publish src/Casebound.Linux/Casebound.Linux.csproj -c Release -r $RUNTIME --self-contained true
+        --source ./nuget-sources -p:CaseboundFlatpak=true -o /app/lib/casebound
+      - install -Dm755 flatpak/casebound.sh /app/bin/casebound
+      - install -Dm644 packaging/io.github.lhead001.Casebound.desktop -t /app/share/applications
+      - install -Dm644 packaging/io.github.lhead001.Casebound.metainfo.xml -t /app/share/metainfo
+      - for s in 16 22 24 32 48 64 128 256 512; do install -Dm644 packaging/icons/hicolor/${s}x${s}/apps/io.github.lhead001.Casebound.png
+        /app/share/icons/hicolor/${s}x${s}/apps/io.github.lhead001.Casebound.png; done
+    sources:
+      - type: git
+        url: https://github.com/lhead001/casebound-linux.git
+        tag: v1.0.0
+        # commit: <fill in after tagging>
+      - nuget-sources.json

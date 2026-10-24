@@ -1,0 +1,27 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:v="using:Casebound.Views"
+        x:Class="Casebound.MainWindow"
+        Title="Casebound" Width="1180" Height="780" MinWidth="900" MinHeight="600"
+        Icon="avares://casebound/Assets/Casebound-256.png">
+  <Grid ColumnDefinitions="200,*">
+    <Border Background="{DynamicResource SystemControlBackgroundChromeMediumLowBrush}">
+      <DockPanel Margin="10,14">
+        <StackPanel DockPanel.Dock="Top" Orientation="Horizontal" Spacing="10" Margin="6,0,0,18">
+          <Image Source="avares://casebound/Assets/Casebound-256.png" Width="28" Height="28"/>
+          <TextBlock Text="Casebound" FontSize="18" FontWeight="SemiBold" VerticalAlignment="Center"/>
+        </StackPanel>
+        <ListBox x:Name="Nav" SelectionChanged="Nav_SelectionChanged" Background="Transparent">
+          <ListBoxItem Content="🎧  Listen" Padding="12,10"/>
+          <ListBoxItem Content="🔄  Convert" Padding="12,10"/>
+          <ListBoxItem Content="❔  Help" Padding="12,10"/>
+        </ListBox>
+      </DockPanel>
+    </Border>
+    <Panel Grid.Column="1">
+      <v:ListenView x:Name="Listen"/>
+      <v:ConvertView x:Name="Convert" IsVisible="False"/>
+      <v:HelpView x:Name="Help" IsVisible="False"/>
+    </Panel>
+  </Grid>
+</Window>

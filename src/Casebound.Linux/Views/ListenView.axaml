@@ -1,0 +1,197 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             x:Class="Casebound.Views.ListenView">
+  <UserControl.Resources>
+    <DataTemplate x:Key="BookRow">
+      <Grid ColumnDefinitions="52,*" Background="Transparent">
+        <Grid.ContextMenu>
+      <ContextMenu>
+            <MenuItem Header="Play" Click="BookPlay_Click"/>
+            <MenuItem Header="Show in Files" Click="BookReveal_Click"/>
+            <MenuItem Header="Mark as not started" Click="BookReset_Click"/>
+            <Separator/>
+            <MenuItem Header="Remove from list" Click="BookHide_Click"/>
+            <MenuItem Header="Move to Trash…" Click="BookDelete_Click"/>
+          </ContextMenu>
+        </Grid.ContextMenu>
+        <Border Width="52" Height="52" CornerRadius="4" ClipToBounds="True" Background="{DynamicResource SystemControlBackgroundBaseLowBrush}">
+          <Panel>
+            <TextBlock Text="📖" FontSize="20" HorizontalAlignment="Center" VerticalAlignment="Center" Opacity="0.5" IsVisible="{Binding NoCover}"/>
+            <Image Source="{Binding Cover}" Stretch="UniformToFill"/>
+          </Panel>
+        </Border>
+        <StackPanel Grid.Column="1" Margin="12,0,6,0" Spacing="1" VerticalAlignment="Center">
+          <Grid ColumnDefinitions="*,Auto">
+            <TextBlock Text="{Binding Title}" FontWeight="SemiBold" TextTrimming="CharacterEllipsis"/>
+            <TextBlock Grid.Column="1" Text="▶" Foreground="{DynamicResource SystemAccentColor}" IsVisible="{Binding IsPlaying}" Margin="6,0,0,0"/>
+          </Grid>
+          <TextBlock Text="{Binding Author}" Classes="caption" TextTrimming="CharacterEllipsis"/>
+          <TextBlock Text="{Binding Detail}" Classes="caption" TextTrimming="CharacterEllipsis"/>
+          <ProgressBar Value="{Binding ProgressPercent}" Maximum="100" MinWidth="0" Height="4" MinHeight="4" Margin="0,4,0,0"/>
+        </StackPanel>
+      </Grid>
+    </DataTemplate>
+  </UserControl.Resources>
+
+  <Grid ColumnDefinitions="360,*" Margin="24,16,24,20">
+    <!-- ================= Library ================= -->
+    <Grid RowDefinitions="Auto,*,Auto" Margin="0,0,24,0">
+      <Grid ColumnDefinitions="*,Auto">
+        <TextBlock Text="Listen" Classes="title"/>
+        <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="4">
+          <Button Content="⟳" Click="Refresh_Click" ToolTip.Tip="Rescan library folders"/>
+          <Button Content="⋯" ToolTip.Tip="Library options">
+            <Button.Flyout>
+              <MenuFlyout Placement="BottomEdgeAlignedRight">
+                <MenuItem Header="Choose synced library folder…" Click="SetSynced_Click"/>
+                <MenuItem Header="Stop using synced folder" Click="ClearSynced_Click"/>
+                <MenuItem Header="Add a folder of books…" Click="AddFolder_Click"/>
+                <Separator/>
+                <MenuItem Header="Show all removed books" Click="UnhideAll_Click"/>
+              </MenuFlyout>
+            </Button.Flyout>
+          </Button>
+        </StackPanel>
+      </Grid>
+
+      <ScrollViewer Grid.Row="1" Margin="0,10,0,8">
+        <StackPanel Spacing="10">
+          <!-- Continue Listening -->
+          <StackPanel Spacing="6" IsVisible="{Binding Library.HasContinue}">
+            <TextBlock Text="Continue Listening" Classes="section"/>
+            <ItemsControl ItemsSource="{Binding Library.ContinueListening}">
+              <ItemsControl.ItemsPanel><ItemsPanelTemplate><WrapPanel/></ItemsPanelTemplate></ItemsControl.ItemsPanel>
+              <ItemsControl.ItemTemplate>
+                <DataTemplate>
+                  <Button Click="Continue_Click" Tag="{Binding}" Padding="0" Margin="0,0,10,6" Width="104" Background="Transparent" BorderThickness="0" ToolTip.Tip="{Binding Title}">
+                    <StackPanel Spacing="3">
+                      <Border Width="104" Height="104" CornerRadius="6" ClipToBounds="True" Background="{DynamicResource SystemControlBackgroundBaseLowBrush}">
+                        <Panel>
+                          <TextBlock Text="📖" FontSize="30" HorizontalAlignment="Center" VerticalAlignment="Center" Opacity="0.5" IsVisible="{Binding NoCover}"/>
+                          <Image Source="{Binding Cover}" Stretch="UniformToFill"/>
+                        </Panel>
+                      </Border>
+                      <TextBlock Text="{Binding Title}" FontSize="12" TextTrimming="CharacterEllipsis"/>
+                      <ProgressBar Value="{Binding ProgressPercent}" Maximum="100" MinWidth="0" Height="3" MinHeight="3"/>
+                    </StackPanel>
+                  </Button>
+                </DataTemplate>
+              </ItemsControl.ItemTemplate>
+            </ItemsControl>
+          </StackPanel>
+
+          <TextBlock Text="Library" Classes="section" IsVisible="{Binding Library.HasContinue}"/>
+          <Border Classes="card" Padding="0,4">
+            <Panel>
+              <ListBox x:Name="BookList" ItemsSource="{Binding Library.Books}" ItemTemplate="{StaticResource BookRow}"
+                       Background="Transparent" SelectionMode="Single" DoubleTapped="Book_DoubleTapped" Tapped="Book_Tapped"/>
+              <StackPanel IsVisible="{Binding Library.IsEmpty}" Margin="24,30" Spacing="8" HorizontalAlignment="Center">
+                <TextBlock Text="No books yet" Classes="subtitle" HorizontalAlignment="Center"/>
+                <TextBlock Text="Convert one on the Convert screen, or click ⋯ to choose your synced library folder or add a folder that has .m4b files in it."
+                           TextWrapping="Wrap" TextAlignment="Center" Opacity="0.7"/>
+              </StackPanel>
+            </Panel>
+          </Border>
+
+          <!-- Removed from this list (N) — same idea as the Apple apps -->
+          <Expander IsVisible="{Binding Library.HasRemoved}" HorizontalAlignment="Stretch">
+            <Expander.Header>
+              <Grid ColumnDefinitions="*,Auto">
+                <TextBlock Text="{Binding Library.RemovedHeader}" VerticalAlignment="Center"/>
+              </Grid>
+            </Expander.Header>
+            <StackPanel Spacing="6">
+              <TextBlock Text="These files are still in your folders; they're just hidden here." Classes="caption" TextWrapping="Wrap"/>
+              <Button Content="Show All" Click="UnhideAll_Click"/>
+              <ItemsControl ItemsSource="{Binding Library.Removed}">
+                <ItemsControl.ItemTemplate>
+                  <DataTemplate>
+                    <Grid ColumnDefinitions="*,Auto" Margin="0,3">
+                      <TextBlock Text="{Binding Title}" VerticalAlignment="Center" TextTrimming="CharacterEllipsis"/>
+                      <Button Grid.Column="1" Content="Show" Tag="{Binding}" Click="Unhide_Click"/>
+                    </Grid>
+                  </DataTemplate>
+                </ItemsControl.ItemTemplate>
+              </ItemsControl>
+            </StackPanel>
+          </Expander>
+        </StackPanel>
+      </ScrollViewer>
+
+      <SelectableTextBlock Grid.Row="2" Text="{Binding Library.FolderSummary}" Classes="caption" FontSize="12" Opacity="0.7" TextWrapping="Wrap"/>
+    </Grid>
+
+    <!-- ================= Player ================= -->
+    <Panel Grid.Column="1">
+      <StackPanel IsVisible="{Binding Player.NoBook}" VerticalAlignment="Center" HorizontalAlignment="Center" Spacing="8">
+        <TextBlock Text="🎧" FontSize="48" HorizontalAlignment="Center" Opacity="0.5"/>
+        <TextBlock Text="Click a book to start listening" Classes="subtitle" HorizontalAlignment="Center"/>
+        <TextBlock Text="{Binding Player.Error}" Foreground="IndianRed" TextWrapping="Wrap" MaxWidth="420" TextAlignment="Center"/>
+      </StackPanel>
+
+      <Grid IsVisible="{Binding Player.HasBook}" MaxWidth="600" RowDefinitions="Auto,Auto,Auto,Auto,Auto,*">
+        <!-- Continue from… guard -->
+        <Border Grid.Row="0" Classes="card" Padding="12,8" Margin="0,0,0,10" IsVisible="{Binding Player.HasOffer}">
+          <Grid ColumnDefinitions="*,Auto,Auto">
+            <TextBlock Text="{Binding Player.OfferText}" TextWrapping="Wrap" VerticalAlignment="Center"/>
+            <Button Grid.Column="1" Content="Continue" Classes="accent" Margin="8,0,0,0" Click="AcceptOffer_Click"/>
+            <Button Grid.Column="2" Content="Stay here" Margin="6,0,0,0" Click="DeclineOffer_Click"/>
+          </Grid>
+        </Border>
+
+        <Grid Grid.Row="1" ColumnDefinitions="Auto,*" Margin="0,8,0,14">
+          <Border Width="180" Height="180" CornerRadius="8" ClipToBounds="True" Background="{DynamicResource SystemControlBackgroundBaseLowBrush}">
+            <Panel>
+              <TextBlock Text="📖" FontSize="48" HorizontalAlignment="Center" VerticalAlignment="Center" Opacity="0.5"/>
+              <Image Source="{Binding Player.Cover}" Stretch="UniformToFill"/>
+            </Panel>
+          </Border>
+          <StackPanel Grid.Column="1" Margin="20,0,0,0" VerticalAlignment="Center" Spacing="4">
+            <TextBlock Text="{Binding Player.Title}" Classes="subtitle" TextWrapping="Wrap" MaxLines="3"/>
+            <TextBlock Text="{Binding Player.Author}" Opacity="0.7" TextWrapping="Wrap"/>
+            <TextBlock Text="{Binding Player.ChapterTitle}" FontWeight="SemiBold" Margin="0,10,0,0" TextWrapping="Wrap" MaxLines="2"/>
+            <TextBlock Text="{Binding Player.ChapterProgressText}" Classes="caption"/>
+            <TextBlock Text="{Binding Player.SleepText}" FontSize="12" Foreground="{DynamicResource SystemAccentColor}"/>
+            <TextBlock Text="{Binding Player.Error}" FontSize="12" Foreground="IndianRed" TextWrapping="Wrap"/>
+          </StackPanel>
+        </Grid>
+
+        <StackPanel Grid.Row="2">
+          <Slider x:Name="Scrubber" Minimum="0" Maximum="{Binding Player.Duration}"/>
+          <Grid ColumnDefinitions="*,*">
+            <TextBlock Text="{Binding Player.PositionText}" Classes="caption"/>
+            <TextBlock Grid.Column="1" Text="{Binding Player.RemainingText}" Classes="caption" HorizontalAlignment="Right"/>
+          </Grid>
+        </StackPanel>
+
+        <StackPanel Grid.Row="3" Orientation="Horizontal" HorizontalAlignment="Center" Spacing="10" Margin="0,10">
+          <Button Content="⏮" FontSize="18" Click="PrevChapter_Click" ToolTip.Tip="Previous chapter" Background="Transparent" VerticalAlignment="Center"/>
+          <Button x:Name="BackButton" FontSize="15" Click="Back_Click" Background="Transparent" VerticalAlignment="Center"/>
+          <Button Content="{Binding Player.PlayGlyph}" Classes="accent" FontSize="24" Width="64" Height="64" CornerRadius="32"
+                  HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Click="PlayPause_Click" ToolTip.Tip="Play / pause (Space)"/>
+          <Button x:Name="ForwardButton" FontSize="15" Click="Forward_Click" Background="Transparent" VerticalAlignment="Center"/>
+          <Button Content="⏭" FontSize="18" Click="NextChapter_Click" ToolTip.Tip="Next chapter" Background="Transparent" VerticalAlignment="Center"/>
+        </StackPanel>
+
+        <StackPanel Grid.Row="4" Orientation="Horizontal" HorizontalAlignment="Center" Spacing="12" Margin="0,0,0,12">
+          <ComboBox x:Name="SpeedBox" MinWidth="110" SelectionChanged="Speed_SelectionChanged" ToolTip.Tip="Playback speed"/>
+          <ComboBox x:Name="SleepBox" MinWidth="170" SelectionChanged="Sleep_SelectionChanged" ToolTip.Tip="Sleep timer"/>
+        </StackPanel>
+
+        <Border Grid.Row="5" Classes="card">
+          <ListBox x:Name="ChapterList" ItemsSource="{Binding Player.Chapters}" Background="Transparent" Tapped="Chapter_Tapped">
+            <ListBox.ItemTemplate>
+              <DataTemplate>
+                <Grid ColumnDefinitions="32,*,Auto">
+                  <TextBlock Text="{Binding Marker}" Opacity="0.6" VerticalAlignment="Center"/>
+                  <TextBlock Grid.Column="1" Text="{Binding Title}" TextTrimming="CharacterEllipsis" VerticalAlignment="Center"/>
+                  <TextBlock Grid.Column="2" Text="{Binding DurationText}" Opacity="0.7" VerticalAlignment="Center"/>
+                </Grid>
+              </DataTemplate>
+            </ListBox.ItemTemplate>
+          </ListBox>
+        </Border>
+      </Grid>
+    </Panel>
+  </Grid>
+</UserControl>

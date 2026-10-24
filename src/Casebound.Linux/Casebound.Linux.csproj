@@ -1,0 +1,22 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net10.0</TargetFramework>
+    <RootNamespace>Casebound</RootNamespace>
+    <AssemblyName>casebound</AssemblyName>
+    <AvaloniaUseCompiledBindingsByDefault>false</AvaloniaUseCompiledBindingsByDefault>
+    <NoWarn>$(NoWarn);CA1416;AVLN3001</NoWarn>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="Avalonia" Version="12.1.4" />
+    <PackageReference Include="Avalonia.Desktop" Version="12.1.4" />
+    <PackageReference Include="Avalonia.Themes.Fluent" Version="12.1.4" />
+    <PackageReference Include="Avalonia.Fonts.Inter" Version="12.1.4" />
+    <PackageReference Include="LibVLCSharp" Version="3.10.2" />
+    <PackageReference Include="Tmds.DBus" Version="0.95.1" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="../CaseboundKit/CaseboundKit.csproj" />
+    <AvaloniaResource Include="Assets/**" />
+  </ItemGroup>
+</Project>

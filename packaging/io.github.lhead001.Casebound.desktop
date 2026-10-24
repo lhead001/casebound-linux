@@ -1,0 +1,11 @@
+[Desktop Entry]
+Type=Application
+Name=Casebound Audio
+GenericName=Audiobook Player and Converter
+Comment=Turn audio files into chaptered audiobooks and listen with your place kept in sync
+Exec=casebound
+Icon=io.github.lhead001.Casebound
+Categories=AudioVideo;Audio;Player;
+Keywords=audiobook;m4b;chapters;convert;mp3;podcast;
+StartupWMClass=io.github.lhead001.Casebound
+Terminal=false

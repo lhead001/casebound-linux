@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<component type="desktop-application">
+  <id>io.github.lhead001.Casebound</id>
+  <name>Casebound Audio</name>
+  <summary>Bind audio files into chaptered audiobooks and pick up where you left off</summary>
+  <metadata_license>CC0-1.0</metadata_license>
+  <project_license>GPL-3.0-or-later</project_license>
+  <developer id="io.github.lhead001">
+    <name>Lowell Head</name>
+  </developer>
+  <description>
+    <p>
+      Casebound turns a folder of audio files into a single chaptered .m4b audiobook, then plays it
+      with your place remembered — on this computer and on your other devices.
+    </p>
+    <p>Convert:</p>
+    <ul>
+      <li>Drop in MP3, M4A, WAV, FLAC, OGG or Opus files, or a whole folder; each file becomes a chapter</li>
+      <li>Natural ordering, easy reordering, and quick chapter naming (front matter, numbered chapters, back matter)</li>
+      <li>Title, author, narrator and cover art, read from tags and editable</li>
+      <li>AAC encoding, and every finished book is verified by reading its chapters back</li>
+    </ul>
+    <p>Listen:</p>
+    <ul>
+      <li>Continue Listening for the books you are partway through</li>
+      <li>Chapter list, playback speed that keeps the narrator's pitch, and a sleep timer</li>
+      <li>Media keys and desktop media controls</li>
+    </ul>
+    <p>
+      To share books and positions with other devices, choose a folder kept in sync by an app you already
+      use, such as Nextcloud, Dropbox or Syncthing. Casebound has no account and no servers, and makes no
+      network connections of its own.
+    </p>
+  </description>
+  <launchable type="desktop-id">io.github.lhead001.Casebound.desktop</launchable>
+  <provides><binary>casebound</binary></provides>
+  <url type="homepage">https://github.com/lhead001/casebound-linux</url>
+  <url type="bugtracker">https://github.com/lhead001/casebound-linux/issues</url>
+  <url type="vcs-browser">https://github.com/lhead001/casebound-linux</url>
+  <categories>
+    <category>AudioVideo</category>
+    <category>Audio</category>
+    <category>Player</category>
+  </categories>
+  <keywords>
+    <keyword>audiobook</keyword>
+    <keyword>m4b</keyword>
+    <keyword>chapters</keyword>
+    <keyword>converter</keyword>
+  </keywords>
+  <content_rating type="oars-1.1"/>
+  <supports>
+    <control>pointing</control>
+    <control>keyboard</control>
+  </supports>
+  <requires>
+    <display_length compare="ge">768</display_length>
+  </requires>
+  <branding>
+    <color type="primary" scheme_preference="light">#f5c58a</color>
+    <color type="primary" scheme_preference="dark">#1c2430</color>
+  </branding>
+  <screenshots>
+    <screenshot type="default">
+      <image>https://raw.githubusercontent.com/lhead001/casebound-linux/v1.0.0/screenshots/1-listen.png</image>
+      <caption>Listen: your library, Continue Listening and the chapter list</caption>
+    </screenshot>
+    <screenshot>
+      <image>https://raw.githubusercontent.com/lhead001/casebound-linux/v1.0.0/screenshots/2-convert.png</image>
+      <caption>Convert a folder of audio files into one chaptered audiobook</caption>
+    </screenshot>
+    <screenshot>
+      <image>https://raw.githubusercontent.com/lhead001/casebound-linux/v1.0.0/screenshots/3-help.png</image>
+      <caption>Built-in help, including syncing through a folder you choose</caption>
+    </screenshot>
+  </screenshots>
+  <releases>
+    <release version="1.0.0" date="2026-10-23">
+      <description>
+        <p>First release for Linux: convert audio files to chaptered .m4b audiobooks, a player with speed, chapters, sleep timer and resume, and position sync through a folder of your choice.</p>
+      </description>
+    </release>
+  </releases>
+</component>

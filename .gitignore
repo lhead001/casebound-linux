@@ -1,0 +1,15 @@
+bin/
+obj/
+publish/
+dist/
+.flatpak-builder/
+build-dir/
+build/
+repo/
+state/
+*.flatpak
+*.AppImage
+harness/data/
+*.user
+.vs/
+.idea/

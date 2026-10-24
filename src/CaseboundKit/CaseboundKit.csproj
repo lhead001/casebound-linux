@@ -1,0 +1,14 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <!-- The engine. No UI. Decodes with ffmpeg and encodes AAC with ffmpeg's built-in encoder,
+       then writes the M4B with the hand-written MP4 muxer (Mp4/Mp4Writer.cs). -->
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <RootNamespace>Casebound.Kit</RootNamespace>
+    <AssemblyName>CaseboundKit</AssemblyName>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="TagLibSharp" Version="2.3.0" />
+  </ItemGroup>
+  <ItemGroup><InternalsVisibleTo Include="Casebound.Tests" /></ItemGroup>
+</Project>

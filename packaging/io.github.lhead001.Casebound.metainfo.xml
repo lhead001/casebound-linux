@@ -75,6 +75,11 @@
     </screenshot>
   </screenshots>
   <releases>
+    <release version="1.0.1" date="2026-11-02">
+      <description>
+        <p>Much faster conversions: audio is now encoded on all processor cores at once.</p>
+      </description>
+    </release>
     <release version="1.0.0" date="2026-10-23">
       <description>
         <p>First release for Linux: convert audio files to chaptered .m4b audiobooks, a player with speed, chapters, sleep timer and resume, and position sync through a folder of your choice.</p>

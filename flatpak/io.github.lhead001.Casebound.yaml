@@ -194,6 +194,6 @@ modules:
     sources:
       - type: git
         url: https://github.com/lhead001/casebound-linux.git
-        tag: v1.0.0
-        # commit: <fill in after tagging>
+        tag: v1.0.1
+        commit: f498a64a23dd40a052f6578fb5aa5c7d9a39bcce
       - nuget-sources.json
